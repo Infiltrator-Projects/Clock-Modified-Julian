@@ -61,9 +61,19 @@ static bool format_clock(const InfiltratrTemporalClockProvider *provider,
     fraction_phase = day_fraction_phase(phase);
     const int64_t whole_day = EPOCH_DAY + days;
     const uint64_t fractional_tick = fraction_phase * units / DAY_US;
-    written = snprintf(text, sizeof(text), "%s%s%lld.%0*llu",
-        CLOCK_LABEL, vertical ? "\n" : " ", (long long)whole_day,
-        show_seconds ? 5 : 3, (unsigned long long)fractional_tick);
+    /* Format the signed scaled value, not a negative floor-day followed
+     * by a positive fraction: floor-day -1 plus fraction .5 is -0.5.
+     * The representable Unix-microsecond domain keeps this product well
+     * within int64_t, including five fractional day digits. */
+    const int64_t scaled_day = whole_day * (int64_t)units +
+                               (int64_t)fractional_tick;
+    const bool negative = scaled_day < 0;
+    const uint64_t magnitude = negative ? (uint64_t)(-scaled_day)
+                                        : (uint64_t)scaled_day;
+    written = snprintf(text, sizeof(text), "%s%s%s%llu.%0*llu",
+        CLOCK_LABEL, vertical ? "\n" : " ", negative ? "-" : "",
+        (unsigned long long)(magnitude / units),
+        show_seconds ? 5 : 3, (unsigned long long)(magnitude % units));
     if (written <= 0 || (size_t)written >= sizeof(text) ||
         (size_t)written >= capacity) return false;
     memcpy(buffer, text, (size_t)written + 1U);
