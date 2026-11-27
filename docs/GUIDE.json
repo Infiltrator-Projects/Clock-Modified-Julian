@@ -1,6 +1,6 @@
 {
   "title": "Modified Julian Date Clock",
-  "intro": "Modified Julian Date (MJD) is a shortened continuous day coordinate, defined as Julian Date minus 2400000.5. Unlike Julian Date, its integer boundary is midnight.",
+  "intro": "Modified Julian Date (MJD) is a shortened continuous day coordinate, defined as Julian Date minus 2400000.5.",
   "structure": "The integer part advances at UTC midnight. The decimal fraction measures part of the same uniform 24-hour model day. Three fractional digits resolve 86.4 ordinary seconds and five resolve 0.864 seconds.",
   "example": "At the Unix epoch (1 January 1970, 00:00 UTC), MJD is 40587.000; twelve hours later it is 40587.500. At 12:00 UTC on 1 January 2000 it is 51544.500. The higher-precision setting adds two fractional digits.",
   "history": "The modified convention provides a shorter day count and a midnight boundary for scientific and engineering records. Its zero corresponds to 17 November 1858, 00:00 on the corresponding civil-day coordinate.",
